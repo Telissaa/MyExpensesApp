@@ -2,8 +2,12 @@ package pl.wluczak.myexpenses.ui.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -28,30 +32,39 @@ fun HomeHeader(
     val formatter = DateTimeFormatter.ofPattern("d MMMM", Locale.forLanguageTag("pl-PL"))
     val formattedDate = LocalDate.now().format(formatter)
 
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
-            .background(MaterialTheme.colorScheme.surface),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(vertical = 10.dp)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    // logika zmiany zdjęcia i otwierania profilu
+                },
+                modifier = Modifier.size(45.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Zdjęcie profilowe",
+                    modifier = Modifier.fillMaxSize(),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        // Mały odstęp pionowy między ikoną a napisem z datą
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // 2. Napis z dzisiejszym dniem (automatycznie ląduje po lewej stronie w nowej linii)
         Text(
             text = "Dziś jest $formattedDate",
-            fontSize = 26.sp,
+            fontSize = 26.sp
         )
-
-        IconButton(
-            onClick = {
-                // logika zmiany zdjęcia / otwierania profilu
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Zdjęcie profilowe",
-                modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
     }
 }
