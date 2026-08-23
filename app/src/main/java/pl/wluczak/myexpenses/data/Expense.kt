@@ -9,7 +9,7 @@ data class Expense (
 
     val name: String,
     val amount: Double,
-    val date: Long,
+    val date: String, // Format: yyyy-MM-dd
     val category: String,
     val subcategory: String = "",         //optional
     val productPhotoUrl: String? = null,  //optional

@@ -18,7 +18,10 @@ interface ExpenseDao {
 
     @Delete
     suspend fun deleteExpense(expense: Expense)
-
+    //list of all expenses
     @Query("SELECT * FROM expenses")
     fun getAllExpenses(): Flow<List<Expense>>
+    //sum of monthly expenses
+    @Query("SELECT SUM(amount) FROM expenses WHERE date LIKE :yearMonthPattern")
+    fun getTotalSpentForMonth(yearMonthPattern: String): Flow<Double?>
 }

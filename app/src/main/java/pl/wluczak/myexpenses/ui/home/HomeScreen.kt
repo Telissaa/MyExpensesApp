@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,14 +21,14 @@ import pl.wluczak.myexpenses.utils.formatAmount
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: ExpenseViewModel = viewModel(),
+    viewModel: HomeViewModel = koinViewModel(),
 ) {
-    // data
     val state by viewModel.uiState.collectAsState()
 
     Column(
@@ -41,7 +40,7 @@ fun HomeScreen(
         HomeHeader()
         Spacer(modifier = Modifier.height(20.dp))
         ExpenseCard(
-            text = "${formatAmount(state.totalBudget)} zł",
+            text = "${formatAmount(state.totalSpent)} zł",
         )
         Spacer(modifier = Modifier.height(20.dp))
         BudgetCard(
@@ -57,7 +56,7 @@ fun HomeScreen(
             modifier = Modifier
                 .size(250.dp, 60.dp)
                 .align(Alignment.End),
-            shape = RoundedCornerShape(0.dp),// Ostre krawędzie jak w Boxie
+            shape = RoundedCornerShape(0.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFDCDCDC),
                 contentColor = Color.Black
