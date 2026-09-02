@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import org.koin.androidx.compose.koinViewModel
+import pl.wluczak.myexpenses.ui.home.components.BottomNavBar
 
 
 @Composable
@@ -31,41 +32,49 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 25.dp, vertical = 5.dp),
-    ) {
-        HomeHeader()
-        Spacer(modifier = Modifier.height(20.dp))
-        ExpenseCard(
-            text = "${formatAmount(state.totalSpent)} zł",
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        BudgetCard(
-            budget = "${formatAmount(state.totalBudget)} zł",
-            spent = "${formatAmount(state.balance)} zł",
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = {
-                // TODO: Logika zostanie dodana później
-            },
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .size(250.dp, 60.dp)
-                .align(Alignment.End),
-            shape = RoundedCornerShape(0.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFDCDCDC),
-                contentColor = Color.Black
-            )
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(horizontal = 25.dp, vertical = 5.dp),
         ) {
-            Text(
-                text = "Zaprojektuj swój budżet",
-                fontSize = 18.sp,
+            HomeHeader()
+            Spacer(modifier = Modifier.height(20.dp))
+            ExpenseCard(
+                text = "${formatAmount(state.totalSpent)} zł",
             )
+            Spacer(modifier = Modifier.height(20.dp))
+            BudgetCard(
+                budget = "${formatAmount(state.totalBudget)} zł",
+                spent = "${formatAmount(state.balance)} zł",
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = {
+                    // TODO: Logika zostanie dodana później
+                },
+                modifier = Modifier
+                    .size(250.dp, 60.dp)
+                    .align(Alignment.End),
+                shape = RoundedCornerShape(0.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFDCDCDC),
+                    contentColor = Color.Black
+                )
+            ) {
+                Text(
+                    text = "Zaprojektuj swój budżet",
+                    fontSize = 18.sp,
+                )
+            }
         }
+
+        BottomNavBar(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 40.dp)
+        )
     }
 }
