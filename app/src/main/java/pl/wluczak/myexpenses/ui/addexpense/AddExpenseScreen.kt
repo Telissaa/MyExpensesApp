@@ -22,6 +22,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -50,6 +52,23 @@ fun AddExpenseScreen(
     var categoryDropdownExpanded by remember { mutableStateOf(false) }
     var subCategoryDropdownExpanded by remember { mutableStateOf(false) }
     var showDatePickerDialog by remember { mutableStateOf(false) }
+
+    val categoryFocusRequester = remember { FocusRequester() }
+    val subCategoryFocusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(state.isAddingCustomCategory) {
+        if (state.isAddingCustomCategory) {
+            kotlinx.coroutines.delay(100)
+            categoryFocusRequester.requestFocus()
+        }
+    }
+
+    LaunchedEffect(state.isAddingCustomSubCategory) {
+        if (state.isAddingCustomSubCategory) {
+            kotlinx.coroutines.delay(100)
+            subCategoryFocusRequester.requestFocus()
+        }
+    }
 
     // Kopiowanie wybranego zdjęcia do pamięci trwałej aplikacji
     fun saveImageToLocalFolder(contentUri: android.net.Uri?): String? {
@@ -181,11 +200,10 @@ fun AddExpenseScreen(
                         onValueChange = { viewModel.onCategoryChanged(it) },
                         placeholder = "kategoria",
                         readOnly = !state.isAddingCustomCategory,
-                        onClick = {
-                            if (!state.isAddingCustomCategory) {
-                                categoryDropdownExpanded = true
-                            }
-                        },
+                        focusRequester = categoryFocusRequester,
+                        onClick = if (!state.isAddingCustomCategory) {
+                            { categoryDropdownExpanded = true }
+                        } else null,
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Default.ArrowDropDown,
@@ -238,11 +256,10 @@ fun AddExpenseScreen(
                         onValueChange = { viewModel.onSubCategoryChanged(it) },
                         placeholder = "podkategoria",
                         readOnly = !state.isAddingCustomSubCategory,
-                        onClick = {
-                            if (!state.isAddingCustomSubCategory) {
-                                subCategoryDropdownExpanded = true
-                            }
-                        },
+                        focusRequester = subCategoryFocusRequester,
+                        onClick = if (!state.isAddingCustomSubCategory) {
+                            { subCategoryDropdownExpanded = true }
+                        } else null,
                         modifier = Modifier.width(180.dp)
                     )
 
@@ -384,6 +401,7 @@ private fun WhiteInputField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     readOnly: Boolean = false,
     onClick: (() -> Unit)? = null,
@@ -426,7 +444,9 @@ private fun WhiteInputField(
                         color = Color.Black,
                         textAlign = TextAlign.Center
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                 )
             }
             if (trailingIcon != null) {
