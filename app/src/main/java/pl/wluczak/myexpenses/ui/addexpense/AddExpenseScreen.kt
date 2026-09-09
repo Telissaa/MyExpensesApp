@@ -51,18 +51,37 @@ fun AddExpenseScreen(
     var subCategoryDropdownExpanded by remember { mutableStateOf(false) }
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
+    // Kopiowanie wybranego zdjęcia do pamięci trwałej aplikacji
+    fun saveImageToLocalFolder(contentUri: android.net.Uri?): String? {
+        if (contentUri == null) return null
+        return try {
+            val inputStream = context.contentResolver.openInputStream(contentUri) ?: return null
+            val photoDir = java.io.File(context.filesDir, "expense_photos")
+            if (!photoDir.exists()) photoDir.mkdirs()
+            val photoFile = java.io.File(photoDir, "photo_${System.currentTimeMillis()}.jpg")
+            photoFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+            photoFile.absolutePath
+        } catch (e: Exception) {
+            contentUri.toString()
+        }
+    }
+
     // Wybór zdjęcia produktu z galerii
     val productImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        viewModel.onProductImageUriChanged(uri?.toString())
+        val localPath = saveImageToLocalFolder(uri)
+        viewModel.onProductImageUriChanged(localPath)
     }
 
     // Wybór zdjęcia paragonu z galerii
     val receiptImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        viewModel.onReceiptImageUriChanged(uri?.toString())
+        val localPath = saveImageToLocalFolder(uri)
+        viewModel.onReceiptImageUriChanged(localPath)
     }
 
     // Prośba o pozwolenie na dostęp do galerii

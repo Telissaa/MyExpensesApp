@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.wluczak.myexpenses.data.Expense
-import pl.wluczak.myexpenses.data.ExpenseDao
+import pl.wluczak.myexpenses.data.ExpenseRepository
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class AddExpenseViewModel(
-    private val expenseDao: ExpenseDao
+    private val repository: ExpenseRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AddExpenseUiState())
     val uiState: StateFlow<AddExpenseUiState> = _uiState.asStateFlow()
@@ -26,7 +26,7 @@ class AddExpenseViewModel(
     init {
         // Ładujemy unikalne kategorie z bazy w tle (Dispatchers.IO) bez blokowania wątku głównego
         viewModelScope.launch(Dispatchers.IO) {
-            expenseDao.getAllCategories().collect { dbCategories ->
+            repository.getAllCategories().collect { dbCategories ->
                 val combined = (defaultCategories + dbCategories).distinct()
                 _uiState.update { it.copy(availableCategories = combined) }
             }
@@ -41,7 +41,7 @@ class AddExpenseViewModel(
         }
 
         subcategoriesJob = viewModelScope.launch(Dispatchers.IO) {
-            expenseDao.getSubcategoriesForCategory(categoryName).collect { dbSubcategories ->
+            repository.getSubcategoriesForCategory(categoryName).collect { dbSubcategories ->
                 _uiState.update { it.copy(availableSubCategories = dbSubcategories) }
             }
         }
@@ -163,8 +163,8 @@ class AddExpenseViewModel(
                     subcategory = currentState.subCategory.trim()
                 )
 
-                // Próba zapisu w bazie danych
-                expenseDao.insertExpense(expense)
+                // Próba zapisu w bazie danych przez repozytorium
+                repository.insertExpense(expense)
 
                 _uiState.update { it.copy(isLoading = false) }
 

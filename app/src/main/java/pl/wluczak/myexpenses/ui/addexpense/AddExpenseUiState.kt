@@ -1,8 +1,10 @@
 package pl.wluczak.myexpenses.ui.addexpense
 
+import androidx.compose.runtime.Immutable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@Immutable
 data class AddExpenseUiState(
     val name: String = "",
     val amount: String = "",
