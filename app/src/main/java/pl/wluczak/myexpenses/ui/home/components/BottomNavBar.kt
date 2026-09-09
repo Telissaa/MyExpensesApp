@@ -19,7 +19,10 @@ import pl.wluczak.myexpenses.ui.theme.lavender
 
 @Composable
 fun BottomNavBar(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAnalyticsClick: () -> Unit = {},
+    onAddExpenseClick: () -> Unit = {},
+    onHistoryClick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier
@@ -38,7 +41,7 @@ fun BottomNavBar(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .clickable { /* TODO */ },
+                    .clickable { onAnalyticsClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -53,7 +56,7 @@ fun BottomNavBar(
                 modifier = Modifier
                     .size(54.dp)
                     .clip(CircleShape)
-                    .clickable { /* TODO */ },
+                    .clickable { onAddExpenseClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -68,7 +71,7 @@ fun BottomNavBar(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .clickable { /* TODO */ },
+                    .clickable { onHistoryClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

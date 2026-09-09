@@ -5,6 +5,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import pl.wluczak.myexpenses.data.AppDatabase
 import pl.wluczak.myexpenses.data.ExpenseDao
+import pl.wluczak.myexpenses.ui.addexpense.AddExpenseViewModel
 import pl.wluczak.myexpenses.ui.home.HomeViewModel
 import org.koin.core.module.dsl.viewModel
 
@@ -22,6 +23,7 @@ val AppModule = module {
     // 2. Definiujemy jak stworzyć DAO (pobierając je z instancji bazy)
     single<ExpenseDao> { get<AppDatabase>().expenseDao() }
 
-    // 3. Definiujemy ViewModel
+    // 3. Definiujemy ViewModele
     viewModel { HomeViewModel(get()) }
+    viewModel { AddExpenseViewModel(get()) }
 }

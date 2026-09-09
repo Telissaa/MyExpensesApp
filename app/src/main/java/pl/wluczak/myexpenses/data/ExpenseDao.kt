@@ -24,4 +24,12 @@ interface ExpenseDao {
     //sum of monthly expenses
     @Query("SELECT SUM(amount) FROM expenses WHERE date LIKE :yearMonthPattern")
     fun getTotalSpentForMonth(yearMonthPattern: String): Flow<Double?>
+
+    // lista unikalnych kategorii
+    @Query("SELECT DISTINCT category FROM expenses WHERE category IS NOT NULL AND category != ''")
+    fun getAllCategories(): Flow<List<String>>
+
+    // lista podkategorii dla wybranej kategorii
+    @Query("SELECT DISTINCT subcategory FROM expenses WHERE category = :category AND subcategory IS NOT NULL AND subcategory != ''")
+    fun getSubcategoriesForCategory(category: String): Flow<List<String>>
 }

@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
-import pl.wluczak.myexpenses.ui.addexpense.ExpenseViewModel
 import pl.wluczak.myexpenses.ui.home.components.BudgetCard
 import pl.wluczak.myexpenses.utils.formatAmount
 import androidx.compose.material3.Button
@@ -29,6 +28,9 @@ import pl.wluczak.myexpenses.ui.home.components.BottomNavBar
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
+    onNavigateToAddExpense: () -> Unit = {},
+    onNavigateToHistory: () -> Unit = {},
+    onNavigateToAnalytics: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -74,7 +76,10 @@ fun HomeScreen(
         BottomNavBar(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 40.dp)
+                .padding(bottom = 40.dp),
+            onAnalyticsClick = onNavigateToAnalytics,
+            onAddExpenseClick = onNavigateToAddExpense,
+            onHistoryClick = onNavigateToHistory
         )
     }
 }
