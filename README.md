@@ -19,6 +19,14 @@ The application is written in **Kotlin** and leverages the latest Google standar
 *   **Add Expense Form:** An intuitive screen allowing quick transaction entry (name, price, date, categories) with built-in error validation. Support for attaching product and receipt photos.
 *   **Secure Navigation:** Centrally managed routing system (`Screen` sealed class) handling the home screen, history, statistics, and forms.
 
+## Future Development
+* Deploy the app backend to Firebase to enable cross-device data synchronization.
+* Develop an expanded desktop version of the application.
+* Add family sharing – link user accounts together into a family group.
+* Integrate AI for optical receipt recognition and automated expense entry.
+* Integrate AI for household budget and expense analysis, as well as financial forecasting.
+
+
 ## Project Structure
 
 Clean Architecture:
@@ -34,9 +42,8 @@ pl.wluczak.myexpenses/
 │   └── addexpense/     # Add expense form screen
 └── utils/              # Helper formatting functions (e.g., currencies, dates)
 
-## Future Development
-* Deploy the app backend to Firebase to enable cross-device data synchronization.
-* Develop an expanded desktop version of the application.
-* Add family sharing – link user accounts together into a family group.
-* Integrate AI for optical receipt recognition and automated expense entry.
-* Integrate AI for household budget and expense analysis, as well as financial forecasting.
+
+
+
+
+
