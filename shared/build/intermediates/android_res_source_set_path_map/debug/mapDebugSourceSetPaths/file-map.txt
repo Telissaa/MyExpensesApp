@@ -1,0 +1,11 @@
+pl.wluczak.myexpenses.shared-pngs-0 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\generated\res\pngs\debug
+pl.wluczak.myexpenses.shared-updated_navigation_xml-1 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\generated\updated_navigation_xml\debug
+pl.wluczak.myexpenses.shared-mergeDebugResources-2 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
+pl.wluczak.myexpenses.shared-mergeDebugResources-3 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+pl.wluczak.myexpenses.shared-debug-4 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\merged_res\debug\mergeDebugResources
+pl.wluczak.myexpenses.shared-debug-5 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\packaged_res\debug\packageDebugResources
+pl.wluczak.myexpenses.shared-androidDebug-6 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\androidDebug\res
+pl.wluczak.myexpenses.shared-androidMain-7 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\androidMain\res
+pl.wluczak.myexpenses.shared-debug-8 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\debug\res
+pl.wluczak.myexpenses.shared-main-9 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\main\res
+gradleHome-0 C:\Users\Weron\.gradle

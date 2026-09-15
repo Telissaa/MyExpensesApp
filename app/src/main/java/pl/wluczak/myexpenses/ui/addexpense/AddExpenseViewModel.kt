@@ -24,7 +24,6 @@ class AddExpenseViewModel(
     private var subcategoriesJob: Job? = null
 
     init {
-        // Ładujemy unikalne kategorie z bazy w tle (Dispatchers.IO) bez blokowania wątku głównego
         viewModelScope.launch(Dispatchers.IO) {
             repository.getAllCategories().collect { dbCategories ->
                 val combined = (defaultCategories + dbCategories).distinct()

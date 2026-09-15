@@ -1,0 +1,11 @@
+pl.wluczak.myexpenses.shared-pngs-0 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\generated\res\pngs\release
+pl.wluczak.myexpenses.shared-updated_navigation_xml-1 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\generated\updated_navigation_xml\release
+pl.wluczak.myexpenses.shared-mergeReleaseResources-2 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
+pl.wluczak.myexpenses.shared-mergeReleaseResources-3 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+pl.wluczak.myexpenses.shared-release-4 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\merged_res\release\mergeReleaseResources
+pl.wluczak.myexpenses.shared-release-5 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\build\intermediates\packaged_res\release\packageReleaseResources
+pl.wluczak.myexpenses.shared-androidMain-6 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\androidMain\res
+pl.wluczak.myexpenses.shared-androidRelease-7 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\androidRelease\res
+pl.wluczak.myexpenses.shared-main-8 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\main\res
+pl.wluczak.myexpenses.shared-release-9 C:\Users\Weron\AndroidStudioProjects\MyExpenses\shared\src\release\res
+gradleHome-0 C:\Users\Weron\.gradle

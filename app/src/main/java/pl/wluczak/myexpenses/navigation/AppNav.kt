@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pl.wluczak.myexpenses.ui.addexpense.AddExpenseScreen
+import pl.wluczak.myexpenses.ui.history.HistoryScreen
 import pl.wluczak.myexpenses.ui.home.HomeScreen
 
 sealed class Screen(val route: String) {
@@ -91,7 +92,9 @@ fun AppNav(
             PlaceholderScreen(title = "Statystyki")
         }
         composable(Screen.History.route) {
-            PlaceholderScreen(title = "Historia")
+            HistoryScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.BudgetPlanning.route) {
             PlaceholderScreen(title = "Zaprojektuj swój budżet")

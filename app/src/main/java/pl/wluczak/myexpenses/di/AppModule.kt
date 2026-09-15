@@ -9,10 +9,10 @@ import pl.wluczak.myexpenses.data.ExpenseRepository
 import pl.wluczak.myexpenses.data.ExpenseRepositoryImpl
 import pl.wluczak.myexpenses.ui.addexpense.AddExpenseViewModel
 import pl.wluczak.myexpenses.ui.home.HomeViewModel
+import pl.wluczak.myexpenses.ui.history.HistoryViewModel
 import org.koin.core.module.dsl.viewModel
 
 val AppModule = module {
-    // 1. Definiujemy jak stworzyć instancję bazy danych
     single {
         Room.databaseBuilder(
             androidContext(),
@@ -22,13 +22,11 @@ val AppModule = module {
             .build()
     }
 
-    // 2. Definiujemy jak stworzyć DAO
     single<ExpenseDao> { get<AppDatabase>().expenseDao() }
 
-    // 3. Definiujemy Repozytorium
     single<ExpenseRepository> { ExpenseRepositoryImpl(get()) }
 
-    // 4. Definiujemy ViewModele
     viewModel { HomeViewModel(get()) }
     viewModel { AddExpenseViewModel(get()) }
+    viewModel { HistoryViewModel(get()) }
 }

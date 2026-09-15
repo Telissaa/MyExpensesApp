@@ -1,0 +1,1 @@
+pl.wluczak.myexpenses.shared
