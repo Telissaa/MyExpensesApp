@@ -1,6 +1,7 @@
 package pl.wluczak.myexpenses.ui.home.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -32,6 +33,7 @@ fun BudgetCard(
     spent: String,
     iconSize: Dp = 60.dp,
     modifier: Modifier = Modifier,
+    onAddClick: () -> Unit = {},
 ) {
     // Outbox
     Box(
@@ -95,9 +97,7 @@ fun BudgetCard(
             }
         }
         IconButton(
-            onClick = {
-                // przenosi do dodawania wydatku
-            },
+            onClick = onAddClick,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = 12.dp, bottom = 130.dp)

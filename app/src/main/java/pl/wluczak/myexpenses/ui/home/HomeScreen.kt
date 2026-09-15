@@ -30,7 +30,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     onNavigateToAddExpense: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
-    onNavigateToAnalytics: () -> Unit = {}
+    onNavigateToAnalytics: () -> Unit = {},
+    onNavigateToBudgetPlanning: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -45,18 +46,18 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(20.dp))
             ExpenseCard(
                 text = "${formatAmount(state.totalSpent)} zł",
+                onAddClick = onNavigateToAddExpense,
             )
             Spacer(modifier = Modifier.height(20.dp))
             BudgetCard(
                 budget = "${formatAmount(state.totalBudget)} zł",
                 spent = "${formatAmount(state.balance)} zł",
+                onAddClick = onNavigateToAnalytics,
             )
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
-                onClick = {
-                    // TODO: Logika zostanie dodana później
-                },
+                onClick = onNavigateToBudgetPlanning,
                 modifier = Modifier
                     .size(250.dp, 60.dp)
                     .align(Alignment.End),
@@ -72,14 +73,14 @@ fun HomeScreen(
                 )
             }
         }
-
         BottomNavBar(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 40.dp),
+                .padding(bottom = 24.dp),
             onAnalyticsClick = onNavigateToAnalytics,
             onAddExpenseClick = onNavigateToAddExpense,
             onHistoryClick = onNavigateToHistory
         )
+
     }
 }

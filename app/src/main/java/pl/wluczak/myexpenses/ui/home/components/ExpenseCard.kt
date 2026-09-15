@@ -29,6 +29,7 @@ fun ExpenseCard(
     text: String,
     modifier: Modifier = Modifier,
     iconSize: Dp = 60.dp,
+    onAddClick: () -> Unit = {},
 ) {
 
     Box(//outbox
@@ -65,9 +66,7 @@ fun ExpenseCard(
         }
 
         IconButton(
-            onClick = {
-                // przenosi do dodawania wydatku
-            },
+            onClick = onAddClick,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = 12.dp, bottom = 130.dp)

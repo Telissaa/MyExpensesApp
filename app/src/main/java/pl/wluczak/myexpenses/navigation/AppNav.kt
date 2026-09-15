@@ -23,6 +23,7 @@ sealed class Screen(val route: String) {
     object AddExpense : Screen("add_expense")
     object Analytics : Screen("analytics")
     object History : Screen("history")
+    object BudgetPlanning : Screen("budget_planning")
 }
 
 @Composable
@@ -75,6 +76,9 @@ fun AppNav(
                 },
                 onNavigateToAnalytics = {
                     navController.navigate(Screen.Analytics.route)
+                },
+                onNavigateToBudgetPlanning = {
+                    navController.navigate(Screen.BudgetPlanning.route)
                 }
             )
         }
@@ -88,6 +92,9 @@ fun AppNav(
         }
         composable(Screen.History.route) {
             PlaceholderScreen(title = "Historia")
+        }
+        composable(Screen.BudgetPlanning.route) {
+            PlaceholderScreen(title = "Zaprojektuj swój budżet")
         }
     }
 }
