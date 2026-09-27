@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MyExpenses</string>
+    <string name="history_screen_title">Historia</string>
+    <string name="content_description_filter">Filtrowanie</string>
+    <string name="content_description_sort">Sortowanie</string>
+    <string name="content_description_photo_attached">Zdjęcie dodane</string>
+    <string name="expense_item_photo_label">zdjęcie</string>
 </resources>

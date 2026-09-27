@@ -43,6 +43,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.Divider
+import androidx.compose.ui.res.stringResource
+import pl.wluczak.myexpenses.R
 import pl.wluczak.myexpenses.utils.formatAmount
 import pl.wluczak.myexpenses.utils.formatDateString
 
@@ -87,7 +89,7 @@ fun HistoryScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Historia",
+                text = stringResource(R.string.history_screen_title),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 fontSize = 28.sp,
@@ -100,13 +102,13 @@ fun HistoryScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.FilterList,
-                    contentDescription = "Filtrowanie",
+                    contentDescription = stringResource(R.string.content_description_filter),
                     modifier = Modifier.size(33.dp),
                     tint = purple
                 )
                 Icon(
                     imageVector = Icons.Default.SwapVert,
-                    contentDescription = "Sortowanie",
+                    contentDescription = stringResource(R.string.content_description_sort),
                     modifier = Modifier.size(31.dp),
                     tint = darkerBlue
                 )
@@ -220,13 +222,13 @@ fun HistoryExpenseItem(
                 if (!expense.productPhotoUrl.isNullOrEmpty() || !expense.receiptPhotoUrl.isNullOrEmpty()) {
                     Icon(
                         imageVector = Icons.Default.Image,
-                        contentDescription = "Zdjecie dodane",
+                        contentDescription = stringResource(R.string.content_description_photo_attached),
                         modifier = Modifier.size(16.dp),
                         tint = Color.DarkGray
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "zdjęcie",
+                        text = stringResource(R.string.expense_item_photo_label),
                         fontSize = 12.sp,
                         color = Color.DarkGray
                     )
