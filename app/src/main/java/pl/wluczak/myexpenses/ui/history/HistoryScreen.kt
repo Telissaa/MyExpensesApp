@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,7 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import pl.wluczak.myexpenses.R
-import pl.wluczak.myexpenses.ui.history.components.FilterMenu
+import pl.wluczak.myexpenses.ui.history.components.FilterBottomSheet
 import pl.wluczak.myexpenses.ui.history.components.SortMenu
 import pl.wluczak.myexpenses.utils.formatAmount
 import pl.wluczak.myexpenses.utils.formatDateString
@@ -80,6 +81,7 @@ fun HistoryScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var showFilterSheet by remember { mutableStateOf(false) }
     
     Scaffold(
         topBar = {}
@@ -103,11 +105,28 @@ fun HistoryScreen(
                     .padding(horizontal = 15.dp, vertical = 13.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                FilterMenu(
-                    onFilterSelected = { selectedFilter ->
-                        viewModel.onFilterChanged(selectedFilter)
-                    }
-                )
+                // Podpięcie Bottom Sheet Filtrowania zamiast małego menu
+                IconButton(onClick = { showFilterSheet = true }) {
+                    Icon(
+                        imageVector = Icons.Default.FilterList, // Zakładam, że ten import musimy dodać (Alt+Enter)
+                        contentDescription = stringResource(R.string.content_description_filter),
+                        modifier = Modifier.size(33.dp),
+                        tint = purple
+                    )
+                }
+
+                if (showFilterSheet) {
+                    FilterBottomSheet(
+                        availableCategories = state.availableCategories,
+                        categoryToSubcategoriesMap = state.categoryToSubcategoriesMap,
+                        currentFilter = state.currentFilter,
+                        onDismissRequest = { showFilterSheet = false },
+                        onFilterApplied = { newFilter ->
+                            viewModel.onFilterChanged(newFilter)
+                        }
+                    )
+                }
+
                 SortMenu(
                     onSortSelected = { selectedOrder ->
                         viewModel.onSortOrderChanged(selectedOrder)

@@ -23,8 +23,6 @@ import pl.wluczak.myexpenses.ui.theme.darkerBlue
 
 @Composable
 fun SortMenu(
-    // Przekazujemy fukcję wyższego rzędu (callback) do ViewModelu,
-    // dzięki temu nasz komponent jest "głupi" i nie zna ViewModelu bezpośrednio!
     onSortSelected: (SortOrder) -> Unit
 ) {
     var showSortMenu by remember { mutableStateOf(false) }
@@ -54,13 +52,6 @@ fun SortMenu(
                 text = { Text("Najstarsze") },
                 onClick = {
                     onSortSelected(SortOrder.DATE_ASC)
-                    showSortMenu = false
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Najstarsze") },
-                onClick = {
-                    onSortSelected(SortOrder.AMOUNT_DESC)
                     showSortMenu = false
                 }
             )
@@ -95,7 +86,7 @@ fun SortMenu(
             DropdownMenuItem(
                 text = { Text("A-Z") },
                 onClick = {
-                    onSortSelected(SortOrder.ALFABETICALLY_ASC)
+                    onSortSelected(SortOrder.ALPHABETICALLY_ASC)
                     showSortMenu = false
                 }
             )
