@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,7 +38,7 @@ import pl.wluczak.myexpenses.data.Expense
 import pl.wluczak.myexpenses.ui.theme.darkerBlue
 import pl.wluczak.myexpenses.ui.theme.purple
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import pl.wluczak.myexpenses.R
+import pl.wluczak.myexpenses.ui.history.components.FilterMenu
 import pl.wluczak.myexpenses.ui.history.components.SortMenu
 import pl.wluczak.myexpenses.utils.formatAmount
 import pl.wluczak.myexpenses.utils.formatDateString
@@ -80,7 +80,6 @@ fun HistoryScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    var showSortMenu by remember { mutableStateOf(false) }
     
     Scaffold(
         topBar = {}
@@ -104,11 +103,10 @@ fun HistoryScreen(
                     .padding(horizontal = 15.dp, vertical = 13.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Icon(
-                    imageVector = Icons.Default.FilterList,
-                    contentDescription = stringResource(R.string.content_description_filter),
-                    modifier = Modifier.size(33.dp),
-                    tint = purple
+                FilterMenu(
+                    onFilterSelected = { selectedFilter ->
+                        viewModel.onFilterChanged(selectedFilter)
+                    }
                 )
                 SortMenu(
                     onSortSelected = { selectedOrder ->
@@ -147,7 +145,7 @@ fun HistoryScreen(
                                     fontSize = 18.sp,
                                     modifier = Modifier.padding(bottom = 2.dp)
                                 )
-                                Divider(
+                                HorizontalDivider(
                                     color = Color.Black,
                                     thickness = 1.dp,
                                     modifier = Modifier.fillMaxWidth(0.3f)
