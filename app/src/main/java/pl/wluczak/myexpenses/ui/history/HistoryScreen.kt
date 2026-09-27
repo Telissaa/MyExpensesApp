@@ -38,13 +38,16 @@ import org.koin.androidx.compose.koinViewModel
 import pl.wluczak.myexpenses.data.Expense
 import pl.wluczak.myexpenses.ui.theme.darkerBlue
 import pl.wluczak.myexpenses.ui.theme.purple
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.Divider
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import pl.wluczak.myexpenses.R
+import pl.wluczak.myexpenses.ui.history.components.SortMenu
 import pl.wluczak.myexpenses.utils.formatAmount
 import pl.wluczak.myexpenses.utils.formatDateString
 
@@ -77,6 +80,7 @@ fun HistoryScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var showSortMenu by remember { mutableStateOf(false) }
     
     Scaffold(
         topBar = {}
@@ -106,12 +110,12 @@ fun HistoryScreen(
                     modifier = Modifier.size(33.dp),
                     tint = purple
                 )
-                Icon(
-                    imageVector = Icons.Default.SwapVert,
-                    contentDescription = stringResource(R.string.content_description_sort),
-                    modifier = Modifier.size(31.dp),
-                    tint = darkerBlue
+                SortMenu(
+                    onSortSelected = { selectedOrder ->
+                        viewModel.onSortOrderChanged(selectedOrder)
+                    }
                 )
+
             }
             if (state.isLoading) {
                 Box(
