@@ -8,5 +8,5 @@ fun formatAmount(amount: Double): String {
     formatter.minimumFractionDigits = 0
     formatter.maximumFractionDigits = 2
 
-    return formatter.format(amount)
+    return "${formatter.format(amount)} zł"
 }

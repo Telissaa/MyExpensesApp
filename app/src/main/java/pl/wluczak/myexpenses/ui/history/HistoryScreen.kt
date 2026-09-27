@@ -43,6 +43,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.Divider
+import pl.wluczak.myexpenses.utils.formatAmount
+import pl.wluczak.myexpenses.utils.formatDateString
 
 // Helper to resolve color based on category name.
 // For now, it deterministically picks a pastel color based on the category string's hashcode.
@@ -64,15 +66,6 @@ fun getCategoryColor(category: String): Color {
     }
 }
 
-// Helper to format date if it comes as "yyyy-MM-dd" to "dd.MM.yyyy" for the header
-fun formatDateString(dateString: String): String {
-    return try {
-        val parsedDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-    } catch (_: DateTimeParseException) {
-        dateString // return original if it cannot be parsed
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -197,7 +190,7 @@ fun HistoryExpenseItem(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "${expense.amount}", // Format as needed, e.g. "%.2f zł"
+                        text = formatAmount(expense.amount), // Format from utils
                         fontSize = 16.sp,
                         modifier = Modifier.padding(start = 16.dp)
                     )
