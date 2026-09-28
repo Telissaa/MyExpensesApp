@@ -20,6 +20,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -105,7 +112,7 @@ fun HistoryScreen(
                     .padding(horizontal = 15.dp, vertical = 13.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                // Podpięcie Bottom Sheet Filtrowania zamiast małego menu
+                // Bind FilterBottomSheet instead of a simple dropdown menu
                 IconButton(onClick = { showFilterSheet = true }) {
                     Icon(
                         imageVector = Icons.Default.FilterList, // Zakładam, że ten import musimy dodać (Alt+Enter)
@@ -152,7 +159,7 @@ fun HistoryScreen(
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
                     groupedExpenses.forEach { (date, expensesForDate) ->
-                        stickyHeader {
+                        stickyHeader(key = date) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -172,10 +179,17 @@ fun HistoryScreen(
                             }
                         }
 
-                        items(expensesForDate) { expense ->
+                        items(
+                            items = expensesForDate,
+                            key = { expense -> expense.id }
+                        ) { expense ->
                             HistoryExpenseItem(
                                 expense = expense,
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                modifier = Modifier
+                                    .padding(bottom = 12.dp)
+                                    .animateItem(),
+                                onDeleteClick = viewModel::softDeleteExpense,
+                                onRestoreClick = viewModel::restoreExpense
                             )
                         }
                     }
@@ -188,10 +202,23 @@ fun HistoryScreen(
 @Composable
 fun HistoryExpenseItem(
     expense: Expense,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDeleteClick: (Expense) -> Unit = {},
+    onEditClick: (Expense) -> Unit = {},
+    onRestoreClick: (Expense) -> Unit = {}
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { isExpanded = !isExpanded } // Toggles the expanded state on click
+            .animateContentSize( // Automatically animates size changes (smooth expansion/collapse)
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            ),
         shape = RoundedCornerShape(16.dp),
         color = getCategoryColor(expense.category)
     ) {
@@ -234,28 +261,95 @@ fun HistoryExpenseItem(
                 }
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Bottom section: Photo icon (optional)
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            // Expanded content section
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(color = Color.Black.copy(alpha = 0.1f)) // Subtle separator
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Left side of expanded area: Photo info
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (!expense.productPhotoUrl.isNullOrEmpty() || !expense.receiptPhotoUrl.isNullOrEmpty()) {
+                            Icon(
+                                imageVector = Icons.Default.Image,
+                                contentDescription = stringResource(R.string.content_description_photo_attached),
+                                modifier = Modifier.size(20.dp),
+                                tint = Color.DarkGray
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.expense_item_photo_label),
+                                fontSize = 14.sp,
+                                color = Color.DarkGray
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(R.string.expense_no_photos),
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+
+                    // Right side of expanded area: Action Buttons
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (expense.deletedAt != null) {
+                            // Item is softly deleted, show restore action
+                            IconButton(onClick = { onRestoreClick(expense) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Restore,
+                                    contentDescription = stringResource(R.string.action_restore_expense),
+                                    tint = Color(0xFF4CAF50) // Green
+                                )
+                            }
+                        } else {
+                            // Item is active, show delete and edit actions
+                            IconButton(onClick = { onDeleteClick(expense) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.action_delete_expense),
+                                    tint = Color.Red.copy(alpha = 0.8f)
+                                )
+                            }
+                            IconButton(onClick = { onEditClick(expense) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = stringResource(R.string.action_edit_expense),
+                                    tint = darkerBlue
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Not expanded: Show minimal photo indicator if photos exist
                 if (!expense.productPhotoUrl.isNullOrEmpty() || !expense.receiptPhotoUrl.isNullOrEmpty()) {
-                    Icon(
-                        imageVector = Icons.Default.Image,
-                        contentDescription = stringResource(R.string.content_description_photo_attached),
-                        modifier = Modifier.size(16.dp),
-                        tint = Color.DarkGray
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = stringResource(R.string.expense_item_photo_label),
-                        fontSize = 12.sp,
-                        color = Color.DarkGray
-                    )
-                } else {
-                     // Empty space if no icon to maintain layout structure if needed,
-                     // but based on mockup, it just says "zdjęcie ewentualnie", so we show icon + text if present.
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Image,
+                            contentDescription = stringResource(R.string.content_description_photo_attached),
+                            modifier = Modifier.size(16.dp),
+                            tint = Color.DarkGray
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = stringResource(R.string.expense_item_photo_label),
+                            fontSize = 12.sp,
+                            color = Color.DarkGray
+                        )
+                    }
                 }
             }
         }

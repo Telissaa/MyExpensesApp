@@ -2,6 +2,7 @@ package pl.wluczak.myexpenses.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 import pl.wluczak.myexpenses.data.Expense
 import pl.wluczak.myexpenses.data.ExpenseRepository
 import java.time.LocalDate
+import kotlinx.coroutines.flow.flatMapLatest
 
 class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
     private val _uiState = MutableStateFlow(HistoryUiState())
@@ -25,15 +27,31 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
     }
 
     init{
+        // Loading hard delete for every 2 days
         viewModelScope.launch {
-            combine(repository.getAllExpenses(),_sortOrder,_filterType) {
+            val twoDaysInMillis = 2L * 24 * 60 * 60 * 1000
+            val thresholdTime = System.currentTimeMillis() - twoDaysInMillis
+            repository.cleanupOldDeletedExpenses(thresholdTime)
+        }
+        @OptIn(ExperimentalCoroutinesApi::class)
+        viewModelScope.launch {
+            // React to filter changes (especially Deleted) and switch the base data source
+            val baseExpensesFlow = _filterType.flatMapLatest { currentFilter ->
+                if (currentFilter is FilterType.Deleted) {
+                    repository.getDeletedExpenses()
+                } else {
+                    repository.getAllExpenses()
+                }
+            }
+
+            combine(baseExpensesFlow,_sortOrder,_filterType) {
                 expensesList, sortOrder, filterType ->
                 val filteredList = when (filterType) {
                     FilterType.All -> expensesList
 
                     FilterType.Today -> {
                         val today = LocalDate.now()
-                        val todayString = today.toString() // Domyślny format LocalDate to yyyy-MM-dd
+                        val todayString = today.toString() // Default format of LocalDate is yyyy-MM-dd
                         expensesList.filter { expense ->
                             expense.date == todayString
                         }
@@ -95,7 +113,7 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
                 SortOrder.CATEGORY_DESC -> filteredList.sortedByDescending { it.category }
                 SortOrder.ALPHABETICALLY_ASC -> filteredList.sortedBy { it.name }
             }
-            // Zwracamy własny data class z wynikami, bo Triple mieści tylko 3, a tu potrzebujemy więcej!
+            // Return our own data class with the results because Triple only holds 3 items!
             FilterResult(sortedList, sortOrder, filterType, uniqueCategories, emptyList(), categoryToSubcategoriesMap)
         }.collect { result ->
             _uiState.value = _uiState.value.copy(
@@ -110,9 +128,24 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
             }
         }
     }
+
+    fun softDeleteExpense(expense: Expense) {
+        viewModelScope.launch {
+            val currentTimeMillis = System.currentTimeMillis()
+            val softDeletedExpense = expense.copy(deletedAt = currentTimeMillis)
+            repository.updateExpense(softDeletedExpense)
+        }
+    }
+    
+    fun restoreExpense(expense: Expense) {
+        viewModelScope.launch {
+            val restoredExpense = expense.copy(deletedAt = null)
+            repository.updateExpense(restoredExpense)
+        }
+    }
 }
 
-// Prywatna klasa pomocnicza do pakowania wyników z bloku combine
+// Private helper class to pack the results from the combine block
 private data class FilterResult(
     val list: List<Expense>,
     val sortOrder: SortOrder,
