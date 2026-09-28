@@ -9,6 +9,9 @@ class ExpenseRepositoryImpl(
     override fun getAllExpenses(): Flow<List<Expense>> =
         expenseDao.getAllExpenses()
 
+    override suspend fun getExpenseById(id: Int): Expense? = 
+        expenseDao.getExpenseById(id)
+
     override fun getTotalSpentForMonth(yearMonthPattern: String): Flow<Double?> =
         expenseDao.getTotalSpentForMonth(yearMonthPattern)
 

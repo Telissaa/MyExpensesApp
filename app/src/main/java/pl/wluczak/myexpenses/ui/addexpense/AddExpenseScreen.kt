@@ -42,11 +42,18 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(
+    expenseId: Int = -1,
     modifier: Modifier = Modifier,
     viewModel: AddExpenseViewModel = koinViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    
+    LaunchedEffect(expenseId) {
+        if (expenseId != -1) {
+            viewModel.loadExpenseForEdit(expenseId)
+        }
+    }
     val state by viewModel.uiState.collectAsState()
 
     var categoryDropdownExpanded by remember { mutableStateOf(false) }

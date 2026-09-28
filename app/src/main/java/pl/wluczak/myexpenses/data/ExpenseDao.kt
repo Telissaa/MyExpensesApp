@@ -22,6 +22,9 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses WHERE deletedAt IS NULL")
     fun getAllExpenses(): Flow<List<Expense>>
 
+    @Query("SELECT * FROM expenses WHERE id = :id")
+    suspend fun getExpenseById(id: Int): Expense?
+
     @Query("SELECT * FROM expenses WHERE deletedAt IS NOT NULL")
     fun getDeletedExpenses(): Flow<List<Expense>>
 

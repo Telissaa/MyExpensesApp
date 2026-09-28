@@ -12,16 +12,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import pl.wluczak.myexpenses.ui.addexpense.AddExpenseScreen
 import pl.wluczak.myexpenses.ui.history.HistoryScreen
 import pl.wluczak.myexpenses.ui.home.HomeScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
-    object AddExpense : Screen("add_expense")
+    object AddExpense : Screen("add_expense?expenseId={expenseId}") {
+        fun createRoute(expenseId: Int = -1) = "add_expense?expenseId=$expenseId"
+    }
     object Analytics : Screen("analytics")
     object History : Screen("history")
     object BudgetPlanning : Screen("budget_planning")
@@ -70,7 +74,7 @@ fun AppNav(
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToAddExpense = {
-                    navController.navigate(Screen.AddExpense.route)
+                    navController.navigate(Screen.AddExpense.createRoute())
                 },
                 onNavigateToHistory = {
                     navController.navigate(Screen.History.route)
@@ -83,8 +87,18 @@ fun AppNav(
                 }
             )
         }
-        composable(Screen.AddExpense.route) {
+        composable(
+            route = Screen.AddExpense.route,
+            arguments = listOf(
+                navArgument("expenseId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) { backStackEntry ->
+            val expenseId = backStackEntry.arguments?.getInt("expenseId") ?: -1
             AddExpenseScreen(
+                expenseId = expenseId,
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -93,6 +107,9 @@ fun AppNav(
         }
         composable(Screen.History.route) {
             HistoryScreen(
+                onNavigateToAddExpense = { expenseId ->
+                    navController.navigate(Screen.AddExpense.createRoute(expenseId))
+                },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

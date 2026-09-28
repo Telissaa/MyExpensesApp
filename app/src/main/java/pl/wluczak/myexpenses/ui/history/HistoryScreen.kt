@@ -83,6 +83,7 @@ fun getCategoryColor(category: String): Color {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HistoryScreen(
+    onNavigateToAddExpense: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HistoryViewModel = koinViewModel(),
     onNavigateBack: () -> Unit = {}
@@ -189,7 +190,10 @@ fun HistoryScreen(
                                     .padding(bottom = 12.dp)
                                     .animateItem(),
                                 onDeleteClick = viewModel::softDeleteExpense,
-                                onRestoreClick = viewModel::restoreExpense
+                                onRestoreClick = viewModel::restoreExpense,
+                                onEditClick = { clickedExpense ->
+                                    onNavigateToAddExpense(clickedExpense.id)
+                                }
                             )
                         }
                     }

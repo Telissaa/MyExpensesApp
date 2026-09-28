@@ -133,7 +133,6 @@ class AddExpenseViewModel(
             try {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-                // Walidacja danych przed zapisem
                 if (currentState.name.isBlank()) {
                     throw IllegalArgumentException("Nazwa wydatku nie może być pusta.")
                 }
@@ -155,6 +154,7 @@ class AddExpenseViewModel(
                 }
 
                 val expense = Expense(
+                    id = currentEditingExpenseId ?: 0,
                     name = currentState.name.trim(),
                     amount = amountValue,
                     date = formattedDate,
@@ -164,24 +164,54 @@ class AddExpenseViewModel(
                     receiptPhotoUrl = currentState.receiptImageUri  // Saves the receipt photo URI
                 )
 
-                // Próba zapisu w bazie danych przez repozytorium
-                repository.insertExpense(expense)
+                if (currentEditingExpenseId != null) {
+                    repository.updateExpense(expense)
+                } else {
+                    repository.insertExpense(expense)
+                }
 
                 _uiState.update { it.copy(isLoading = false) }
 
-                // Pomyślny zapis - powiadamiamy UI
                 onSuccess()
             } catch (e: IllegalArgumentException) {
-                // Błąd walidacji - ustawiamy komunikat o błędzie, zachowując wszystkie wprowadzone dane
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             } catch (e: Exception) {
-                // Błąd bazy danych / nieoczekiwany - zachowujemy wprowadzone dane
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         errorMessage = "Błąd zapisu w bazie: ${e.localizedMessage ?: "Spróbuj ponownie"}"
                     )
                 }
+            }
+        }
+    }
+    
+    private var currentEditingExpenseId: Int? = null
+    
+    fun loadExpenseForEdit(expenseId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val expense = repository.getExpenseById(expenseId)
+            expense?.let {
+                currentEditingExpenseId = it.id
+                val displayDate = try {
+                    val parsed = LocalDate.parse(it.date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    parsed.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                } catch (e: Exception) {
+                    it.date
+                }
+                
+                _uiState.update { state -> 
+                    state.copy(
+                        name = it.name,
+                        amount = it.amount.toString(),
+                        date = displayDate,
+                        category = it.category,
+                        subCategory = it.subcategory,
+                        productImageUri = it.productPhotoUrl,
+                        receiptImageUri = it.receiptPhotoUrl
+                    )
+                }
+                loadSubcategories(it.category)
             }
         }
     }

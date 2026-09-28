@@ -55,3 +55,22 @@ Ten dokument opisuje architektoniczne podejście do zmiany mechanizmu przypisywa
 *   Stworzenie nowego ekranu w Jetpack Compose (np. `ManageCategoriesScreen`).
 *   Ekran ten połączy się z `CategoryViewModel`.
 *   Funkcjonalności: wyświetlenie listy kategorii, kliknięcie wywołujące modal (Color Picker) do zmiany koloru, zapis nowej wartości koloru do bazy (update).
+
+
+przykład :
+package pl.wluczak.myexpenses.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+// Twoje kolory bazowe (jasne)
+val FrostedBlue = Color(0xFFACECFF)
+val Wisteria = Color(0xFFD39DE7)
+val LimeCream = Color(0xFFE7ED7A)
+val MyBlack = Color(0xFF000000)
+val MyWhite = Color(0xFFFFFFFF)
+
+// Twoje kolory dodatkowe (ciemniejsze)
+val DarkFrostedBlue = Color(0xFF4A99B8)
+val DarkWisteria = Color(0xFF9252A8)
+val DarkLimeCream = Color(0xFFA0A62D)
+val BackgroundOffWhite = Color(0xFFF8F9FA)

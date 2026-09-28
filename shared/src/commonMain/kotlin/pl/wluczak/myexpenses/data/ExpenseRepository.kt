@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
     fun getAllExpenses(): Flow<List<Expense>>
+    suspend fun getExpenseById(id: Int): Expense?
     fun getTotalSpentForMonth(yearMonthPattern: String): Flow<Double?>
     fun getAllCategories(): Flow<List<String>>
     fun getSubcategoriesForCategory(category: String): Flow<List<String>>
