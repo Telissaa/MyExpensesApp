@@ -22,6 +22,7 @@ kotlin {
         commonMain.dependencies {
             // Tutaj dodajemy biblioteki wieloplatformowe (np. Coroutines)
             implementation(libs.kotlinx.coroutines.core)
+            api(libs.kotlinx.datetime)
             implementation(libs.androidx.room.runtime)
         }
 

@@ -8,9 +8,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import pl.wluczak.myexpenses.data.Expense
 import pl.wluczak.myexpenses.data.ExpenseRepository
-import java.time.LocalDate
+import pl.wluczak.myexpenses.utils.DateRangePeriod
+import pl.wluczak.myexpenses.utils.dateRange
 import kotlinx.coroutines.flow.flatMapLatest
 
 class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
@@ -18,6 +24,7 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
     val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
     private val _sortOrder = MutableStateFlow(SortOrder.DATE_DESC)
     private val _filterType = MutableStateFlow<FilterType>(FilterType.All)
+    private val _referenceDate = MutableStateFlow(currentLocalDate())
 
     fun onSortOrderChanged(newSortOrder: SortOrder) {
         _sortOrder.value = newSortOrder
@@ -25,6 +32,14 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
     fun onFilterChanged(newFilter: FilterType) {
         _filterType.value = newFilter
     }
+
+    fun refreshDateFilters() {
+        _referenceDate.value = currentLocalDate()
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun currentLocalDate(): LocalDate =
+        Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     init{
         // Loading hard delete for every 2 days
@@ -43,44 +58,25 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
                     repository.getAllExpenses()
                 }
 
-                combine(sourceFlow, _sortOrder) { expensesList, sortOrder ->
+                combine(sourceFlow, _sortOrder, _referenceDate) { expensesList, sortOrder, referenceDate ->
                     val filteredList = when (filterType) {
                         FilterType.All -> expensesList
 
-                    FilterType.Today -> {
-                        val today = LocalDate.now()
-                        val todayString = today.toString() // Default format of LocalDate is yyyy-MM-dd
-                        expensesList.filter { expense ->
-                            expense.date == todayString
+                        FilterType.Today -> {
+                            val range = dateRange(DateRangePeriod.DAY, referenceDate)
+                            expensesList.filter { expense -> range.containsIsoDate(expense.date) }
                         }
-                    }
 
-                    FilterType.ThisMonth -> {
-                        val today = java.time.LocalDate.now()
-                        val currentMonth = today.monthValue
-                        val currentYear = today.year
-                        expensesList.filter { expense ->
-                            try{
-                            val expenseDate = java.time.LocalDate.parse(expense.date)
-                            expenseDate.monthValue == currentMonth && expenseDate.year == currentYear
-                            }catch (_: Exception) {
-                                false
-                            }
+                        FilterType.ThisMonth -> {
+                            val range = dateRange(DateRangePeriod.MONTH, referenceDate)
+                            expensesList.filter { expense -> range.containsIsoDate(expense.date) }
                         }
-                    }
-                    FilterType.ThisWeek -> {
-                        val today = java.time.LocalDate.now()
-                        val currentYear = today.year
-                        val currentWeek = today.get(java.time.temporal.WeekFields.ISO.weekOfWeekBasedYear())
-                        expensesList.filter { expense ->
-                            try{
-                                val expenseDate = java.time.LocalDate.parse(expense.date)
-                                expenseDate.get(java.time.temporal.WeekFields.ISO.weekOfWeekBasedYear()) == currentWeek && expenseDate.year == currentYear
-                            }catch (_: Exception) {
-                                false
-                            }
+
+                        FilterType.ThisWeek -> {
+                            val range = dateRange(DateRangePeriod.WEEK, referenceDate)
+                            expensesList.filter { expense -> range.containsIsoDate(expense.date) }
                         }
-                    }
+
                     is FilterType.ByCategory -> {
                         expensesList.filter { expense ->
                             filterType.categoryNames.contains(expense.category)
@@ -102,15 +98,7 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
                 .groupBy({ it.category }, { it.subcategory })
                 .mapValues { it.value.distinct().sorted() }
 
-            val sortedList = when(sortOrder) {
-                SortOrder.DATE_DESC -> filteredList.sortedByDescending { it.date }
-                SortOrder.DATE_ASC -> filteredList.sortedBy { it.date }
-                SortOrder.AMOUNT_DESC -> filteredList.sortedByDescending { it.amount }
-                SortOrder.AMOUNT_ASC -> filteredList.sortedBy { it.amount }
-                SortOrder.CATEGORY_ASC -> filteredList.sortedBy { it.category }
-                SortOrder.CATEGORY_DESC -> filteredList.sortedByDescending { it.category }
-                SortOrder.ALPHABETICALLY_ASC -> filteredList.sortedBy { it.name }
-            }
+            val sortedList = sortExpenses(filteredList, sortOrder)
             // Return our own data class with the results because Triple only holds 3 items!
             FilterResult(sortedList, sortOrder, filterType, uniqueCategories, emptyList(), categoryToSubcategoriesMap)
         }
