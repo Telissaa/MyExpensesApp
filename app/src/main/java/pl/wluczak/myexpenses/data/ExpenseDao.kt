@@ -18,11 +18,18 @@ interface ExpenseDao {
 
     @Delete
     suspend fun deleteExpense(expense: Expense)
-    //list of all expenses
-    @Query("SELECT * FROM expenses")
+    //list of all expenses not deleted
+    @Query("SELECT * FROM expenses WHERE deletedAt IS NULL")
     fun getAllExpenses(): Flow<List<Expense>>
+
+    @Query("SELECT * FROM expenses WHERE deletedAt IS NOT NULL")
+    fun getDeletedExpenses(): Flow<List<Expense>>
+
+    @Query("DELETE FROM expenses WHERE deletedAt IS NOT NULL AND deletedAt < :cleanupThreshold")
+    suspend fun deleteOldSoftDeletedExpenses(cleanupThreshold: Long)
+
     //sum of monthly expenses
-    @Query("SELECT SUM(amount) FROM expenses WHERE date LIKE :yearMonthPattern")
+    @Query("SELECT SUM(amount) FROM expenses WHERE date LIKE :yearMonthPattern AND deletedAt IS NULL")
     fun getTotalSpentForMonth(yearMonthPattern: String): Flow<Double?>
 
     // lista unikalnych kategorii

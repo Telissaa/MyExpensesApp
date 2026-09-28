@@ -5,4 +5,8 @@
     <string name="content_description_sort">Sortowanie</string>
     <string name="content_description_photo_attached">Zdjęcie dodane</string>
     <string name="expense_item_photo_label">zdjęcie</string>
+    <string name="expense_no_photos">Brak zdjęć</string>
+    <string name="action_delete_expense">Usuń wydatek</string>
+    <string name="action_edit_expense">Edytuj wydatek</string>
+    <string name="action_restore_expense">Przywróć wydatek</string>
 </resources>

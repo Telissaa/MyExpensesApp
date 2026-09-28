@@ -26,4 +26,10 @@ class ExpenseRepositoryImpl(
 
     override suspend fun deleteExpense(expense: Expense) =
         expenseDao.deleteExpense(expense)
+
+    override fun getDeletedExpenses(): Flow<List<Expense>> = expenseDao.getDeletedExpenses()
+
+    override suspend fun cleanupOldDeletedExpenses(cleanupThreshold: Long) {
+        expenseDao.deleteOldSoftDeletedExpenses(cleanupThreshold)
+    }
 }

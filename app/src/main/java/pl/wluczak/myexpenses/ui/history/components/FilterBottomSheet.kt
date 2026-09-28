@@ -1,6 +1,8 @@
 package pl.wluczak.myexpenses.ui.history.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -34,7 +36,10 @@ fun FilterBottomSheet(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 FilterChip(
                     selected = selectedFilter is FilterType.Today,
                     onClick = { 

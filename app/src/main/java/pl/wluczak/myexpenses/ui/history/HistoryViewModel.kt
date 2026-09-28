@@ -35,19 +35,17 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
         }
         @OptIn(ExperimentalCoroutinesApi::class)
         viewModelScope.launch {
-            // React to filter changes (especially Deleted) and switch the base data source
-            val baseExpensesFlow = _filterType.flatMapLatest { currentFilter ->
-                if (currentFilter is FilterType.Deleted) {
+            // React to filter changes and prevent race conditions by putting combine inside flatMapLatest
+            _filterType.flatMapLatest { filterType ->
+                val sourceFlow = if (filterType is FilterType.Deleted) {
                     repository.getDeletedExpenses()
                 } else {
                     repository.getAllExpenses()
                 }
-            }
 
-            combine(baseExpensesFlow,_sortOrder,_filterType) {
-                expensesList, sortOrder, filterType ->
-                val filteredList = when (filterType) {
-                    FilterType.All -> expensesList
+                combine(sourceFlow, _sortOrder) { expensesList, sortOrder ->
+                    val filteredList = when (filterType) {
+                        FilterType.All -> expensesList
 
                     FilterType.Today -> {
                         val today = LocalDate.now()
@@ -115,6 +113,7 @@ class HistoryViewModel(private val repository: ExpenseRepository): ViewModel() {
             }
             // Return our own data class with the results because Triple only holds 3 items!
             FilterResult(sortedList, sortOrder, filterType, uniqueCategories, emptyList(), categoryToSubcategoriesMap)
+        }
         }.collect { result ->
             _uiState.value = _uiState.value.copy(
                 expenses = result.list,

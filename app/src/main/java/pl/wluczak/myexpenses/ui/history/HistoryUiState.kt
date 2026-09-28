@@ -17,6 +17,7 @@ sealed class FilterType {
     data object Today : FilterType()
     data object ThisMonth : FilterType()
     data object ThisWeek : FilterType()
+    data object Deleted : FilterType() // Filter to show soft-deleted expenses
 
     data class ByCategory(val categoryNames: Set<String>) : FilterType()
     data class BySubcategory(val subcategoryNames: Set<String>) : FilterType()

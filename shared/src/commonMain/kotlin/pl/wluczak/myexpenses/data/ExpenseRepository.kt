@@ -10,4 +10,6 @@ interface ExpenseRepository {
     suspend fun insertExpense(expense: Expense)
     suspend fun updateExpense(expense: Expense)
     suspend fun deleteExpense(expense: Expense)
+    fun getDeletedExpenses(): Flow<List<Expense>>
+    suspend fun cleanupOldDeletedExpenses(cleanupThreshold: Long)
 }
