@@ -56,6 +56,13 @@ fun FilterBottomSheet(
                     },
                     label = { Text("Ten miesiąc") }
                 )
+                FilterChip(
+                    selected = selectedFilter is FilterType.Deleted,
+                    onClick = { 
+                        selectedFilter = if (selectedFilter is FilterType.Deleted) FilterType.All else FilterType.Deleted 
+                    },
+                    label = { Text("Usunięte") }
+                )
             }
             Spacer(modifier = Modifier.height(24.dp))
             Text(
