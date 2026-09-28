@@ -159,7 +159,9 @@ class AddExpenseViewModel(
                     amount = amountValue,
                     date = formattedDate,
                     category = currentState.category.ifBlank { "Inne" },
-                    subcategory = currentState.subCategory.trim()
+                    subcategory = currentState.subCategory.trim(),
+                    productPhotoUrl = currentState.productImageUri, // Saves the product photo URI
+                    receiptPhotoUrl = currentState.receiptImageUri  // Saves the receipt photo URI
                 )
 
                 // Próba zapisu w bazie danych przez repozytorium
