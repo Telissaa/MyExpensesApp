@@ -45,13 +45,13 @@ fun HomeScreen(
             HomeHeader()
             Spacer(modifier = Modifier.height(20.dp))
             ExpenseCard(
-                text = "${formatAmount(state.totalSpent)} zł",
+                text = formatAmount(state.totalSpent),
                 onAddClick = onNavigateToAddExpense,
             )
             Spacer(modifier = Modifier.height(20.dp))
             BudgetCard(
-                budget = "${formatAmount(state.totalBudget)} zł",
-                spent = "${formatAmount(state.balance)} zł",
+                budget = formatAmount(state.totalBudget),
+                spent = formatAmount(state.balance),
                 onAddClick = onNavigateToAnalytics,
             )
             Spacer(modifier = Modifier.height(20.dp))
