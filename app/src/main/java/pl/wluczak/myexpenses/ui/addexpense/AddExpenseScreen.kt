@@ -27,6 +27,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,12 +39,13 @@ import pl.wluczak.myexpenses.ui.theme.purple
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(
-    expenseId: Int = -1,
     modifier: Modifier = Modifier,
+    expenseId: Int = -1,
     viewModel: AddExpenseViewModel = koinViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
@@ -65,14 +67,14 @@ fun AddExpenseScreen(
 
     LaunchedEffect(state.isAddingCustomCategory) {
         if (state.isAddingCustomCategory) {
-            kotlinx.coroutines.delay(100)
+            kotlinx.coroutines.delay(100.milliseconds)
             categoryFocusRequester.requestFocus()
         }
     }
 
     LaunchedEffect(state.isAddingCustomSubCategory) {
         if (state.isAddingCustomSubCategory) {
-            kotlinx.coroutines.delay(100)
+            kotlinx.coroutines.delay(100.milliseconds)
             subCategoryFocusRequester.requestFocus()
         }
     }
@@ -89,7 +91,7 @@ fun AddExpenseScreen(
                 inputStream.copyTo(outputStream)
             }
             photoFile.absolutePath
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             contentUri.toString()
         }
     }
@@ -167,6 +169,7 @@ fun AddExpenseScreen(
                 value = state.name,
                 onValueChange = { viewModel.onNameChanged(it) },
                 placeholder = "nazwa",
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -208,6 +211,7 @@ fun AddExpenseScreen(
                         placeholder = "kategoria",
                         readOnly = !state.isAddingCustomCategory,
                         focusRequester = categoryFocusRequester,
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
                         onClick = if (!state.isAddingCustomCategory) {
                             { categoryDropdownExpanded = true }
                         } else null,
@@ -264,6 +268,7 @@ fun AddExpenseScreen(
                         placeholder = "podkategoria",
                         readOnly = !state.isAddingCustomSubCategory,
                         focusRequester = subCategoryFocusRequester,
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
                         onClick = if (!state.isAddingCustomSubCategory) {
                             { subCategoryDropdownExpanded = true }
                         } else null,
